@@ -72,6 +72,7 @@ public class DebugPrint implements IHeadsPlusCommand {
 
     @Override
     public boolean fire(String[] args, CommandSender sender) {
+        getDebug().startTimings(sender, "debug");
         try {
             if (args.length < 2) {
                 sender.sendMessage(HeadsPlus.getInstance().getMessagesConfig().getString("commands.errors.invalid-args", sender));
@@ -193,6 +194,7 @@ public class DebugPrint implements IHeadsPlusCommand {
                 e.printStackTrace();
             }
         }
+        getDebug().stopTimings(sender, "debug");
         return true;
     }
 

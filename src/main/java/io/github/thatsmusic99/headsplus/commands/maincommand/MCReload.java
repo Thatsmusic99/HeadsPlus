@@ -32,6 +32,7 @@ public class MCReload implements IHeadsPlusCommand{
 
     @Override
     public boolean fire(String[] args, CommandSender sender) {
+        getDebug().startTimings(sender, "reload");
         HeadsPlusMessagesManager m = HeadsPlus.getInstance().getMessagesConfig();
         String reloadM = m.getString("commands.reload.reload-message");
         String reloadingM = m.getString("commands.reload.reloading-message");
@@ -47,6 +48,7 @@ public class MCReload implements IHeadsPlusCommand{
                     HeadsPlus.getInstance().reloadDE();
                     HeadsPlus.getInstance().restartMessagesManager();
                     sender.sendMessage(reloadM);
+                    getDebug().stopTimings(sender, "reload");
                 }
             }.runTaskLaterAsynchronously(HeadsPlus.getInstance(), 2);
         } catch (Exception e) {

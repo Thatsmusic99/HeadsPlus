@@ -39,6 +39,7 @@ public class SellHead implements CommandExecutor, IHeadsPlusCommand {
 	private final HashMap<String, Integer> hm = new HashMap<>();
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        getDebug().startTimings(sender, "sellhead");
 		try {
 
             HeadsPlus hp = HeadsPlus.getInstance();
@@ -167,6 +168,7 @@ public class SellHead implements CommandExecutor, IHeadsPlusCommand {
         } catch (Exception e) {
 		    DebugPrint.createReport(e, "Command (sellhead)", true, sender);
 		}
+		getDebug().stopTimings(sender, "sellhead");
         return false;
 	}
 

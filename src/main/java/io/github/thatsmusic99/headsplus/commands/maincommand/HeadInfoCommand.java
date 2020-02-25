@@ -73,6 +73,7 @@ public class HeadInfoCommand implements IHeadsPlusCommand {
 
     @Override
     public boolean fire(String[] args, CommandSender sender) {
+        getDebug().startTimings(sender, "headinfo");
         try {
             HeadsPlusConfigHeads hpch = HeadsPlus.getInstance().getHeadsConfig();
             if (args.length > 2) {
@@ -259,6 +260,7 @@ public class HeadInfoCommand implements IHeadsPlusCommand {
             DebugPrint.createReport(e, "Head Information command", true, sender);
         }
 
+        getDebug().stopTimings(sender, "debug");
         return false;
     }
 

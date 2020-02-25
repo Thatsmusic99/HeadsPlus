@@ -34,6 +34,7 @@ public class MyHead implements CommandExecutor, IHeadsPlusCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String l, String[] args) {
+        getDebug().startTimings(sender, "myhead");
         try {
             if (sender.hasPermission("headsplus.myhead")) {
 
@@ -136,7 +137,7 @@ public class MyHead implements CommandExecutor, IHeadsPlusCommand {
         } catch (Exception e) {
             DebugPrint.createReport(e, "Command (myhead)", true, sender);
         }
-
+        getDebug().stopTimings(sender, "myhead");
         return false;
     }
     private static void giveHead(Player p, String n) {

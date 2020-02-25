@@ -6,6 +6,7 @@ import io.github.thatsmusic99.headsplus.api.events.EntityHeadDropEvent;
 import io.github.thatsmusic99.headsplus.api.heads.EntityHead;
 import io.github.thatsmusic99.headsplus.commands.maincommand.DebugPrint;
 import io.github.thatsmusic99.headsplus.config.HeadsPlusConfigHeads;
+import io.github.thatsmusic99.headsplus.config.HeadsPlusDebug;
 import io.github.thatsmusic99.headsplus.config.HeadsPlusMainConfig;
 import io.github.thatsmusic99.headsplus.nms.NMSIndex;
 import io.github.thatsmusic99.headsplus.nms.NMSManager;
@@ -31,6 +32,7 @@ public class DeathEvents implements Listener {
     private HashMap<String, List<EntityHead>> storedHeads = new HashMap<>();
 
     public DeathEvents() {
+        debug = HeadsPlus.getInstance().getDebug();
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -143,15 +145,23 @@ public class DeathEvents implements Listener {
             "ZOMBIE_HORSE",
             "ZOMBIE_VILLAGER"));
     private final HeadsPlusConfigHeads hpch = HeadsPlus.getInstance().getHeadsConfig();
+    private final HeadsPlusDebug debug;
     public static boolean ready = false;
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         final HeadsPlus hp = HeadsPlus.getInstance();
+        debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Death event initiated, entity type: " + e.getEntity().getType().name());
         if (!hp.isDropsEnabled() || checkForMythicMob(hp, e.getEntity())) {
+            debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Event was cancelled due to MythicMob/head drops disabled.");
             return;
         }
-        if (!runBlacklistTests(e.getEntity())) return;
+        if (!runBlacklistTests(e.getEntity())) {
+            debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Event was cancelled due to blacklist checks failing.");
+            return;
+        }
+            debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Spawn tracker has found this entity!");
+                debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Event was cancelled due to spawn type for entity being disabled.");
         try {
             String entity = e.getEntityType().toString().toLowerCase().replaceAll("_", "");
             Random rand = new Random();
@@ -160,6 +170,7 @@ public class DeathEvents implements Listener {
             int amount = 1;
             Player killer = e.getEntity().getKiller();
             if (killer != null) {
+                debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "We've found the killer of this entity!");
                 ItemStack handItem = hp.getNMS().getItemInHand(e.getEntity().getKiller());
                 ConfigurationSection mechanics = hp.getConfiguration().getMechanics();
                 if (handItem != null) {
@@ -178,10 +189,15 @@ public class DeathEvents implements Listener {
 
             }
             if (fixedChance == 0.0) {
+                debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Event was cancelled due to chance being 0.");
                 return;
             }
+            debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Set chance: " + fixedChance + ", Result: " + randChance);
             if (randChance <= fixedChance) {
+                debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Chance criteria met!");
                 dropHead(e.getEntity(), e.getEntity().getKiller(), amount);
+            } else {
+                debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Chance criteria were not met.");
             }
         } catch (Exception ex) {
             DebugPrint.createReport(ex, "Event (DeathEvents)", false, null);
@@ -333,6 +349,7 @@ public class DeathEvents implements Listener {
         List<EntityHead> heads = null;
         try {
             if (storedData.get(name) != null) {
+                debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "StoredData found this entity!");
                 List<String> possibleConditions = new ArrayList<>();
                 for (String methods : storedData.get(name)) {
                     if (entity.getType() == EntityType.CREEPER) {
@@ -342,6 +359,7 @@ public class DeathEvents implements Listener {
                     } else if (entity.getType() == EntityType.valueOf("BEE")) {
                         if (methods.equalsIgnoreCase("hasNectar")) {
                             possibleConditions.add(callMethod(methods, entity).equalsIgnoreCase("true") ? "NECTAR" : "default");
+                            debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Entity is a horse, checking special criteria...");
                         } else {
                             possibleConditions.add(Integer.parseInt(callMethod(methods, entity)) > 0 ? "ANGRY" : "default");
                         }
@@ -378,6 +396,10 @@ public class DeathEvents implements Listener {
             return;
         }
         if (heads.isEmpty()) return;
+        if (heads.isEmpty()) {
+            debug.log("death-event", HeadsPlusDebug.DebugType.EVENT, "Event was cancelled due to heads being empty.");
+            return;
+        }
         EntityHead head = heads.get(random.nextInt(heads.size()));
         head.withAmount(amount);
         Location location = entity.getLocation();

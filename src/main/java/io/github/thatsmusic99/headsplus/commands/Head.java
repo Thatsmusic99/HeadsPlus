@@ -130,6 +130,7 @@ public class Head implements CommandExecutor, IHeadsPlusCommand, TabCompleter {
 
     @Override
     public boolean fire(String[] args, CommandSender sender) {
+        getDebug().startTimings(sender, "head");
 	    try {
 	        if (sender.hasPermission("headsplus.head")) {
 	            if (args.length > 1) {
@@ -176,9 +177,11 @@ public class Head implements CommandExecutor, IHeadsPlusCommand, TabCompleter {
 	        } else {
 	            sender.sendMessage(hpc.getString("commands.errors.no-perm", sender));
 	        }
+
         } catch (Exception e) {
 	        DebugPrint.createReport(e, "Command (head)", true, sender);
         }
+	    getDebug().stopTimings(sender, "head");
         return false;
     }
 

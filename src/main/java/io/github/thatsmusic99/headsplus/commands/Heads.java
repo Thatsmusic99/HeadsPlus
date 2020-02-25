@@ -25,6 +25,7 @@ public class Heads implements CommandExecutor, IHeadsPlusCommand {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String l, String[] args) {
+        getDebug().startTimings(cs, "heads");
         try {
             if (HeadsPlus.getInstance().isUsingHeadDatabase()) {
                 if (cs instanceof Player) {
@@ -45,6 +46,7 @@ public class Heads implements CommandExecutor, IHeadsPlusCommand {
         } catch (Exception e) {
             DebugPrint.createReport(e, "Command (heads)", true, cs);
         }
+        getDebug().stopTimings(cs, "heads");
         return false;
     }
 

@@ -40,6 +40,7 @@ public class Conjure implements IHeadsPlusCommand {
 
     @Override
     public boolean fire(String[] args, CommandSender sender) {
+        getDebug().startTimings(sender, "conjure");
         if (args.length > 1) {
             Player p = null;
             String entity = args[1].toUpperCase();
@@ -93,7 +94,7 @@ public class Conjure implements IHeadsPlusCommand {
         } else {
             sender.sendMessage(hpc.getString("commands.errors.invalid-args", sender));
         }
-
+        getDebug().stopTimings(sender, "conjure");
         return false;
     }
 

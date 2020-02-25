@@ -54,6 +54,7 @@ public class HelpMenu implements IHeadsPlusCommand {
 
 	@Override
 	public boolean fire(String[] args, CommandSender sender) {
+        getDebug().startTimings(sender, "help");
 	    try {
             if (args.length == 0) {
                 helpNoArgs(sender);
@@ -80,6 +81,7 @@ public class HelpMenu implements IHeadsPlusCommand {
 	        DebugPrint.createReport(e, "Subcommand (help)", true, sender);
         }
 
+        getDebug().stopTimings(sender, "help");
         return true;
 	}
 
