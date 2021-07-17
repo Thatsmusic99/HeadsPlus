@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated // Should be moved into the same class
 public class TabCompleteSellhead implements TabCompleter {
 
     @Override

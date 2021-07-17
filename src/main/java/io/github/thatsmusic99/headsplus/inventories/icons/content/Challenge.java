@@ -4,7 +4,7 @@ import io.github.thatsmusic99.headsplus.HeadsPlus;
 import io.github.thatsmusic99.headsplus.api.HPPlayer;
 import io.github.thatsmusic99.headsplus.api.HeadsPlusAPI;
 import io.github.thatsmusic99.headsplus.commands.maincommand.DebugPrint;
-import io.github.thatsmusic99.headsplus.config.HeadsPlusConfigItems;
+import io.github.thatsmusic99.headsplus.config.ConfigInventories;
 import io.github.thatsmusic99.headsplus.config.challenges.HPChallengeRewardTypes;
 import io.github.thatsmusic99.headsplus.inventories.icons.Content;
 import org.apache.commons.lang.WordUtils;
@@ -73,13 +73,11 @@ public class Challenge extends Content {
 
     @Override
     public void initNameAndLore(String id, Player player) {
-        HeadsPlusConfigItems items = hp.getItems();
-        HeadsPlusAPI api = HeadsPlus.getInstance().getAPI();
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(hpc.formatMsg(items.getConfig().getString("icons.challenge.display-name")
+        meta.setDisplayName(hpc.formatMsg(ConfigInventories.get().getString("icons.challenge.display-name")
                 .replaceAll("\\{challenge-name}", challenge.getChallengeHeader()), player));
         List<String> lore = new ArrayList<>();
-        for (String loreStr : items.getConfig().getStringList("icons.challenge.lore")) {
+        for (String loreStr : ConfigInventories.get().getStringList("icons.challenge.lore")) {
             if (loreStr.contains("{challenge-lore}")) {
                 for (String loreStr2 : challenge.getDescription()) {
                     lore.add(hpc.formatMsg(loreStr2, player));
@@ -102,7 +100,7 @@ public class Challenge extends Content {
 
                     }
                     str = str.replaceAll("(\\{xp}|\\{challenge-xp})", String.valueOf(challenge.getGainedXP()))
-                            .replaceAll("\\{heads}", String.valueOf(api.getPlayerInLeaderboards(player,
+                            .replaceAll("\\{heads}", String.valueOf(HeadsPlusAPI.getPlayerInLeaderboards(player,
                                     challenge.getHeadType(),
                                     challenge.getChallengeType().getDatabase())))
                             .replaceAll("\\{total}", String.valueOf(challenge.getRequiredHeadAmount()));
@@ -114,21 +112,6 @@ public class Challenge extends Content {
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
-    }
-
-    @Override
-    public String getDefaultDisplayName() {
-        return "{challenge-name}";
-    }
-
-    @Override
-    public String[] getDefaultLore() {
-        return new String[]{"{challenge-lore}",
-                "{msg_inventory.icon.challenge.reward}",
-                "{msg_inventory.icon.challenge.xp}",
-                "{msg_inventory.icon.challenge.progress}",
-                "{completed}",
-                "{pinned}"};
     }
 
     private void initReward(Player player) {

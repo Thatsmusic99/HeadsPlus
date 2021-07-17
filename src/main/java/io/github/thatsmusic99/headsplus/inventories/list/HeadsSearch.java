@@ -1,7 +1,7 @@
 package io.github.thatsmusic99.headsplus.inventories.list;
 
 import io.github.thatsmusic99.headsplus.HeadsPlus;
-import io.github.thatsmusic99.headsplus.config.customheads.HeadsPlusConfigCustomHeads;
+import io.github.thatsmusic99.headsplus.config.customheads.ConfigCustomHeads;
 import io.github.thatsmusic99.headsplus.inventories.icons.Content;
 import io.github.thatsmusic99.headsplus.inventories.icons.content.CustomHead;
 import org.bukkit.ChatColor;
@@ -18,13 +18,12 @@ public class HeadsSearch extends HeadsSection {
 
     @Override
     public List<Content> transformContents(HashMap<String, String> context, Player player) {
-        HeadsPlusConfigCustomHeads hpch = HeadsPlus.getInstance().getHeadsXConfig();
         String search = context.get("search").toLowerCase();
         List<Content> contents = new ArrayList<>();
-        for (String head : hpch.headsCache.keySet()) {
+        for (String head : ConfigCustomHeads.get().headsCache.keySet()) {
             final String name;
             try {
-                name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', hpch.getConfig().getString("heads." + head + ".displayname"))).toLowerCase().replaceAll("[^a-z]", "");
+                name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', ConfigCustomHeads.get().getString("heads." + head + ".displayname"))).toLowerCase().replaceAll("[^a-z]", "");
             } catch (NullPointerException | IllegalArgumentException ex) {
                 if (!suppressWarnings) {
                     hp.getLogger().warning("Null display name for " + head + "! (Error code: 12)");

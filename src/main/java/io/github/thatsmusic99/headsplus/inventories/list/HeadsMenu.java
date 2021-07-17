@@ -1,7 +1,8 @@
 package io.github.thatsmusic99.headsplus.inventories.list;
 
+import io.github.thatsmusic99.configurationmaster.api.ConfigSection;
 import io.github.thatsmusic99.headsplus.HeadsPlus;
-import io.github.thatsmusic99.headsplus.config.customheads.HeadsPlusConfigCustomHeads;
+import io.github.thatsmusic99.headsplus.config.customheads.ConfigCustomHeads;
 import io.github.thatsmusic99.headsplus.inventories.BaseInventory;
 import io.github.thatsmusic99.headsplus.inventories.icons.Content;
 import io.github.thatsmusic99.headsplus.inventories.icons.content.CustomHeadSection;
@@ -45,13 +46,12 @@ public class HeadsMenu extends BaseInventory {
     @Override
     public List<Content> transformContents(HashMap<String, String> context, Player player) {
         List<Content> contents = new ArrayList<>();
-        HeadsPlusConfigCustomHeads headsConfig = HeadsPlus.getInstance().getHeadsXConfig();
-        for (String section : headsConfig.sections.keySet()) {
-            ConfigurationSection configSec = headsConfig.getConfig().getConfigurationSection("sections." + section);
-            ConfigurationSection itemSec = hpi.getConfigurationSection("icons.headsection");
+        for (String section : ConfigCustomHeads.get().sections.keySet()) {
+            ConfigSection configSec = ConfigCustomHeads.get().getConfigSection("sections." + section);
+            ConfigSection itemSec = hpi.getConfigSection("icons.headsection");
             ItemStack item;
             try {
-                item = headsConfig.getSkull(configSec.getString("texture"));
+                item = ConfigCustomHeads.get().getSkull(configSec.getString("texture"));
             } catch (NullPointerException ex) {
                 if (!suppressWarnings) {
                     hp.getLogger().warning("Texture for " + configSec.getString("texture") + " not found. (Error code: 10)");
@@ -65,7 +65,7 @@ public class HeadsMenu extends BaseInventory {
                 List<String> lore = new ArrayList<>();
                 for (String loreStr : itemSec.getStringList("lore")) {
                     lore.add(hpc.formatMsg(loreStr, player)
-                            .replaceAll("\\{head-count}", String.valueOf(headsConfig.sections.get(section).size())));
+                            .replaceAll("\\{head-count}", String.valueOf(ConfigCustomHeads.get().sections.get(section).size())));
                 }
                 meta.setLore(lore);
             } catch (NullPointerException ex) {

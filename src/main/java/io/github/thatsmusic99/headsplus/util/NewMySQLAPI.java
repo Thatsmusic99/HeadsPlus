@@ -1,19 +1,20 @@
 package io.github.thatsmusic99.headsplus.util;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import io.github.thatsmusic99.headsplus.HeadsPlus;
+import io.github.thatsmusic99.headsplus.managers.DataManager;
+import io.github.thatsmusic99.headsplus.managers.EntityDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.sql.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
+@Deprecated
 public class NewMySQLAPI {
 
-    private static final Connection connection = HeadsPlus.getInstance().getConnection();
+    private static final Connection connection = HeadsPlus.get().getConnection();
 
     public static void createTable() {
         for (String str : Arrays.asList("headspluslb", "headsplussh", "headspluscraft")) {
@@ -36,7 +37,7 @@ public class NewMySQLAPI {
 
     }
 
-    static void addToTotal(String database, int addition, String section, String uuid) {
+    public static void addToTotal(String database, int addition, String section, String uuid) {
         try {
             if (!doesPlayerExist(database, uuid)) addPlayer(database, uuid);
             ResultSet set = query(OperationType.SELECT, section, database, "uuid", uuid);
@@ -44,7 +45,7 @@ public class NewMySQLAPI {
             int total = set.getInt("total");
             int totalSec = set.getInt(section);
             update(OperationType.UPDATE, database, section, String.valueOf(totalSec + addition), String.valueOf(total + addition), "uuid", uuid);
-        } catch (MySQLSyntaxErrorException e) {
+        } catch (SQLSyntaxErrorException e) {
             try {
                 update(OperationType.ALTER, database, section);
             } catch (SQLException ex) {
@@ -55,7 +56,7 @@ public class NewMySQLAPI {
         }
     }
 
-    static LinkedHashMap<OfflinePlayer, Integer> getScores(String section, String database) {
+    public static LinkedHashMap<OfflinePlayer, Integer> getScores(String section, String database) {
         try {
             String mdatabase = "";
             switch (database) {
@@ -92,7 +93,7 @@ public class NewMySQLAPI {
         return null;
     }
 
-    static int getScore(OfflinePlayer player, String section, String database) {
+    public static int getScore(OfflinePlayer player, String section, String database) {
         try {
             String mdatabase = "";
             switch (database) {
